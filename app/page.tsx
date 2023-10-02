@@ -1,94 +1,89 @@
-import Image from 'next/image'
+'use client'
+
+import { useState } from 'react'
 import styles from './page.module.css'
 
 export default function Home() {
+  const [link, setLink] = useState("")
+
+  const readClipboard = async (): Promise<string> => {
+    return await navigator.clipboard.readText()
+  }
+
+  const handlePasteButtonClick = async () => {
+    const clipboard = await readClipboard()
+    console.log(`HandlePasteButtonClick: Parselog: Clipboard text is ${clipboard.length} long`)
+
+    if (clipboard != undefined) {
+      parseLog(clipboard)
+    }
+  }
+
+  const parseLog = async (log: string) => {
+
+    console.log(`Parselog: Clipboard text is ${log.length} long`)
+    
+    // Branch
+    const branchRegExp = /^CI_COMMIT_BRANCH=([\s\S]+?)\n/gm
+    const branchValue = [...log.matchAll(branchRegExp)][0][1]
+    console.log(`Branch value is: ${branchValue}`)
+
+    // Env
+    const envRegExp = /^ENVIRONMENT=([\s\S]+?)\n/gm
+    const envValue = [...log.matchAll(envRegExp)][0][1]
+    console.log(`Env value is: ${envValue}`)
+
+    // TR Plan ID
+    const trPlanIdRegExp = /testrailPlanId=([\s\S]*?)\n/gm
+    const trPlanIdValue = ([...log.matchAll(trPlanIdRegExp)][0].length > 0) ? ([...log.matchAll(trPlanIdRegExp)][0][1]) : null
+    console.log(`TestRail Plan ID value is: ${trPlanIdValue}`)
+
+    // LV verstion
+    const lvVersionRegExp = /testrailVersion=([\s\S]*?)\n/gm
+    const lvVersionValue = ([...log.matchAll(lvVersionRegExp)][0].length > 0) ? ([...log.matchAll(lvVersionRegExp)][0][1]) : null
+    console.log(`LV version value is: ${lvVersionValue}`)
+
+    // Test Results Aggregator
+    const aggregatorRegExp = /resultsAggregator=([\s\S]*?)\n/gm
+    const aggregatorValue = [...log.matchAll(aggregatorRegExp)][0][1]
+    console.log(`Test Results Aggregator value is: ${aggregatorValue}`)
+
+    // Failed tests
+    const failedTestsRegExp = /\[31merror\[0m\] \[0m\[0m	([\s\S]+?Test_[\s\S]+?)/gm
+    const failedTestsValue = [...log.matchAll(failedTestsRegExp)].map(el => el[1]).join(' ')
+    console.log(`Failed tests value is: ${failedTestsValue}`)
+
+    let link = `https://gitlab.natera.com/eng/qa/labvantage/lv-testrunner/-/pipelines/new?` + 
+    `ref=${branchValue}` + 
+    `&var[ENVIRONMENT]=${envValue}` +
+    `&var[resultsAggregator]=${aggregatorValue}`
+
+    if (trPlanIdValue != null) { link = link.concat(`&var[testrailPlanId]=${trPlanIdValue}`) }
+    if (lvVersionValue != null) { link = link.concat(`&var[testrailVersion]=${lvVersionValue}`) }
+    if (failedTestsValue != "") { link = link.concat(`&var[testOnly]=${failedTestsValue}`) }
+    
+    setLink(link)
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
         <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          Paste FULL GitLab job log by clicking a button to start:
+          <button
+            onClick={ async () => await handlePasteButtonClick() }
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
+            Paste
+          </button>
+        </p>
+
+        {link != "" ?
+        <p>
+          <a href={link} target="_blank">
+            {link}
           </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+        </p>
+        : null}
       </div>
     </main>
   )
