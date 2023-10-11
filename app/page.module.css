@@ -17,6 +17,7 @@
   width: 100%;
   z-index: 2;
   font-family: var(--font-mono);
+  flex-grow: 1;
 }
 
 .description p {
@@ -25,4 +26,11 @@
   background-color: rgba(var(--callout-rgb), 0.5);
   border: 1px solid rgba(var(--callout-border-rgb), 0.3);
   border-radius: var(--border-radius);
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.version {
+  width: 100%;
+  text-align: right;
 }
