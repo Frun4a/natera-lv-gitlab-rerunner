@@ -99,6 +99,7 @@ export default function Home() {
         <p>
           Paste FULL GitLab job log by clicking a button to start (NEW PIPELINE):
           <button
+          className={styles.paste_button}
             onClick={ async () => await handlePasteButtonClick() }
           >
             Paste
