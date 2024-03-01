@@ -173,11 +173,11 @@ export default function Home() {
           <p>ver. 0.2.3 (TEST_NAMES_INCLUDE support)</p>
         </div>
       </main>
-      <div className={styles.snowflakes} aria-hidden="true">
+      {/* <div className={styles.snowflakes} aria-hidden="true">
         {
           [...Array(10)].map((value: undefined, index: number) => (<div className={styles.snowflake} key={index}>❅</div>))
         }
-      </div>
+      </div> */}
     </>
   )
 }
