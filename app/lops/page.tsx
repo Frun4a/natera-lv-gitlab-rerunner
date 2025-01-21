@@ -193,7 +193,7 @@ export default function Home() {
               <span className={styles.test_names_passed}>{extractedVariables?.test_names_passed}</span>
               <span className={styles.test_names_failed}>{extractedVariables?.test_names_new}</span>
             <br></br><br></br> */}
-            TEST_ONLY: {extractedVariables?.test_only}
+            TEST_ONLY: {extractedVariables?.test_only} <br></br><br></br>
             SAMREP_ENABLED: {extractedVariables?.samrep_enabled} <br></br><br></br>
             KAFKA_ENABLED: {extractedVariables?.kafka_enabled} <br></br><br></br>
             PARALLEL_EXECUTION: {extractedVariables?.parallel_execution} <br></br><br></br>
