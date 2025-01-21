@@ -126,7 +126,7 @@ export default function Home() {
     <>
       <main className={styles.main}>
         <p>
-          <a href='/lops/'>This is a link to the LOPS page</a>
+          <a href='/natera-lv-gitlab-rerunner/lops/'>This is a link to the LOPS page</a>
         </p>
         <br/>
         <div className={styles.description}>
