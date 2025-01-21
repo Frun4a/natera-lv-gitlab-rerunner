@@ -125,9 +125,13 @@ export default function Home() {
   return (
     <>
       <main className={styles.main}>
+        <p>
+          <a href='/lops/'>This is a link to the LOPS page</a>
+        </p>
+        <br/>
         <div className={styles.description}>
           <p>
-            Paste FULL GitLab job log by clicking a button to start:
+            LV: Paste FULL GitLab job log by clicking a button to start:
             <button
             className={styles.paste_button}
               onClick={ async () => await handlePasteButtonClick() }
@@ -170,7 +174,7 @@ export default function Home() {
 
         </div>
         <div className={styles.version}>
-          <p>ver. 0.2.3 (TEST_NAMES_INCLUDE support)</p>
+          <p>ver. 0.3 (LOPS support)</p>
         </div>
       </main>
       {/* <div className={styles.snowflakes} aria-hidden="true">
