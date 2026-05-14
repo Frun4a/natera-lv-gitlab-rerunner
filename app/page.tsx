@@ -6,17 +6,17 @@ import styles from './page.module.css'
 export default function Home() {
 
   interface ExtractedVariables {
-    branch: String | null,
-    env: String | null,
-    action: String | null,
-    trPlanId: String | null,
-    trVersion: String | null,
-    aggregator: String | null,
-    test_only: String | null,
-    test_names: String | null,
-    passed_tests: Array<String> | null,
-    test_names_new: String | null,
-    test_names_passed: String | null
+    branch: string | null,
+    env: string | null,
+    action: string | null,
+    trPlanId: string | null,
+    trVersion: string | null,
+    aggregator: string | null,
+    test_only: string | null,
+    test_names: string | null,
+    passed_tests: Array<string> | null,
+    test_names_new: string | null,
+    test_names_passed: string | null
   }
 
   const [link, setLink] = useState("")
@@ -76,9 +76,9 @@ export default function Home() {
     const testNamesValue: string | null = ([...log.matchAll(testNamesRegExp)][0][1].length > 0) ? ([...log.matchAll(testNamesRegExp)][0][1]) : null
     console.log(`Test Name Include value is: ${testNamesValue}`)
 
-    let testNamesNewValue: String | null = null
-    let testNamesPassedValue: String | null = null
-    let passedTestsValue: String[] | null = null
+    let testNamesNewValue: string | null = null
+    let testNamesPassedValue: string | null = null
+    let passedTestsValue: string[] | null = null
     if (testNamesValue) {
       // Passed tests
       const passedTestsRegExp = /\[34m\[INFO \]\[0;39m \[36mTestResultLogging\[0;39m - \[32mTEST PASSED: \[0m([\s\S]*?)\n/gm
@@ -91,16 +91,16 @@ export default function Home() {
       console.log(`Test Name Include NEW value is: ${testNamesNewValue}`)
     }
 
-    let link = `https://gitlab.natera.com/eng/qa/labvantage/lv-testrunner/-/pipelines/new?` + 
-    `ref=${branchValue}` + 
-    `&var[ENVIRONMENT]=${envValue}` +
-    `&var[RESULTS_AGGREGATOR_TURN_ON]=${aggregatorValue}` +
-    `&var[ACTION]=${actionValue}`
+    let link = `https://gitlab.natera.com/eng/qa/labvantage/lv-testrunner/-/pipelines/new?` +
+    `ref=${encodeURIComponent(branchValue)}` +
+    `&var[ENVIRONMENT]=${encodeURIComponent(envValue)}` +
+    `&var[RESULTS_AGGREGATOR_TURN_ON]=${encodeURIComponent(aggregatorValue)}` +
+    `&var[ACTION]=${encodeURIComponent(actionValue)}`
 
-    if (trPlanIdValue != null) { link = link.concat(`&var[TESTRAIL_PLAN_ID]=${trPlanIdValue}`) }
-    if (lvVersionValue != null) { link = link.concat(`&var[TESTRAIL_VERSION]=${lvVersionValue}`) }
-    if (failedTestsValue != "") { link = link.concat(`&var[TEST_ONLY]=${failedTestsValue}`) }
-    if (testNamesValue != null && testNamesNewValue != "") { link = link.concat(`&var[TEST_NAMES_INCLUDE]=${testNamesNewValue}`) }
+    if (trPlanIdValue != null) { link = link.concat(`&var[TESTRAIL_PLAN_ID]=${encodeURIComponent(trPlanIdValue!)}`) }
+    if (lvVersionValue != null) { link = link.concat(`&var[TESTRAIL_VERSION]=${encodeURIComponent(lvVersionValue!)}`) }
+    if (failedTestsValue != "") { link = link.concat(`&var[TEST_ONLY]=${encodeURIComponent(failedTestsValue)}`) }
+    if (testNamesValue != null && testNamesNewValue != "") { link = link.concat(`&var[TEST_NAMES_INCLUDE]=${encodeURIComponent(testNamesNewValue!)}`) }
     
     setLink(link)
     setExtractedVariables(
@@ -174,7 +174,7 @@ export default function Home() {
 
         </div>
         <div className={styles.version}>
-          <p>ver. 0.3 (LOPS support)</p>
+          <p>ver. 0.4 (URI encoding support)</p>
         </div>
       </main>
       {/* <div className={styles.snowflakes} aria-hidden="true">
