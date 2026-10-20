@@ -35,7 +35,14 @@ export default function Home() {
     }
   }
 
-  const parseLog = async (log: string) => {
+  const parseLog = async (rawLog: string) => {
+    // Newer GitLab versions prefix every log line with a timestamp and a stream/flags marker,
+    // e.g. "2026-10-15T20:00:02.026249Z 01O " or "2026-10-15T20:00:02.026175Z 00O+".
+    // Strip it (and normalize line endings) so line-anchored regexes keep working.
+    const log = rawLog
+      .replace(/\r/g, '')
+      .replace(/^\d{4}-\d{2}-\d{2}T[\d:.]+Z \d{2}[OE][+ ]?/gm, '')
+
     // Branch
     const branchRegExp = /^CI_COMMIT_BRANCH=([\s\S]+?)\n/gm
     const branchValue = [...log.matchAll(branchRegExp)][0][1]
@@ -67,8 +74,11 @@ export default function Home() {
     console.log(`Test Results Aggregator value is: ${aggregatorValue}`)
 
     // Failed tests
-    const failedTestsRegExp = /\[31merror\[0m\] \[0m\[0m	([\s\S]+?[Test|TEST]_[\s\S]+?)/gm
-    const failedTestsValue = [...log.matchAll(failedTestsRegExp)].map(el => el[1]).join(' ')
+    const failedTestsRegExp = /\[31merror\x1b?\[0m\]\s\x1b?\[0m\x1b?\[0m\s*(\S+)/gm
+    const failedTestsValue = [...log.matchAll(failedTestsRegExp)]
+      .map(el => el[1].replace(/\x1b.*$/, '').replace(/(\[[\d;]*m)+$/, ''))
+      .filter(name => /^[\w$]+(\.[\w$]+)+$/.test(name)) // fully-qualified class names only
+      .join(' ')
     console.log(`Failed tests value is: ${failedTestsValue}`)
 
     // Test name includes
@@ -81,8 +91,8 @@ export default function Home() {
     let passedTestsValue: string[] | null = null
     if (testNamesValue) {
       // Passed tests
-      const passedTestsRegExp = /\[34m\[INFO \]\[0;39m \[36mTestResultLogging\[0;39m - \[32mTEST PASSED: \[0m([\s\S]*?)\n/gm
-      const passedTestsValue = ([...log.matchAll(passedTestsRegExp)].length > 0) ? ([...log.matchAll(passedTestsRegExp)].map(el => el[1])) : null
+      const passedTestsRegExp = /TEST PASSED: \x1b?\[0m([^\n]*)/gm
+      const passedTestsValue = ([...log.matchAll(passedTestsRegExp)].length > 0) ? ([...log.matchAll(passedTestsRegExp)].map(el => el[1].trim())) : null
       console.log(`Passed test(s) is/are: ${passedTestsValue?.join("\n")}`)
 
       const testNamesValueAsArray = testNamesValue.split(";")
