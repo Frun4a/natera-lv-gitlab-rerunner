@@ -184,14 +184,14 @@ export default function Home() {
 
         </div>
         <div className={styles.version}>
-          <p>ver. 0.4 (URI encoding support)</p>
+          <p>ver. 0.5 (GitLab log format support)</p>
         </div>
       </main>
-      {/* <div className={styles.snowflakes} aria-hidden="true">
+      { <div className={styles.snowflakes} aria-hidden="true">
         {
           [...Array(10)].map((value: undefined, index: number) => (<div className={styles.snowflake} key={index}>❅</div>))
         }
-      </div> */}
+      </div> }
     </>
   )
 }
